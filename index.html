@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calc Seguros</title>
+</head>
+
+<body>
+    <div>
+        <div class="formArea">
+            <form id="calcSeguros">
+                <div><label for="ano">Informe o ano</label>
+                    <select name="ano" id="ano">
+                        <option value="2018" selected>2018</option>
+                        <option value="2019">2019</option>
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                    </select>
+                </div>
+                <div><label for="anterior">valor anterior ao reajuste</label>
+                    <input id="anterior" class="anterior valor" name="anterior" type="text" required="required">
+                </div>
+                <div><label for="posterior">valor posterior ao reajuste</label>
+                    <input id="posterior" class="posterior valor" name="posterior" type="text" required="required">
+                </div>
+
+                <div><button id="btn-calc" type="submit">calcular reajuste</button></div>
+            </form>
+
+        </div>
+
+        <div class="messageArea">
+
+
+
+        </div>
+
+        <script>
+
+            const form = document.querySelector("#calcSeguros")
+            const btnCalc = document.getElementById("btn-calc")
+            const messageArea = document.querySelector('.messageArea')
+            let valorAnterior, valorPosterior
+
+            const tabela = {
+                2018: 10,
+                2019: 7.35,
+                2020: 8.14,
+                2021: 8.19,
+                2022: 15.50
+            }
+
+            const stringToNumber = function (valor, tipo) {
+                const parsedValue = Number((valor.replace(/[^\d,]/g, '')).replace(',', '.'));
+                tipo === 'Anterior' ? valorAnterior = parsedValue : tipo = 'Posterior' ? valorPosterior = parsedValue : ""
+            }
+
+            form.addEventListener('input', (e) => {
+
+                if (e.target.classList.contains('valor')) {
+
+                    const value = e.target.value;
+
+                    if (e.target.classList.contains('anterior')) {
+                        stringToNumber(value, "Anterior")
+                    } else {
+                        stringToNumber(value, "Posterior")
+                    }
+
+                }
+
+            })
+
+
+            btnCalc.addEventListener('click', (e) => {
+                e.preventDefault()
+
+                const valores = document.getElementsByClassName("valor")
+                const dropdownAno = document.getElementById("ano")
+                const ano = dropdownAno.value
+
+                function removeAllChildNodes(parent) {
+                    while (parent.firstChild) {
+                        parent.removeChild(parent.firstChild);
+                    }
+                }
+
+                removeAllChildNodes(messageArea);
+
+
+                const calculo = function (anoAnterior, anoAtual) {
+                    const calc = ((anoAtual - anoAnterior) / anoAnterior) * 100
+                    const dif = calc.toFixed(2)
+
+
+
+                    if (anoAnterior == undefined || anoAtual == undefined) {
+
+                        messageArea.insertAdjacentHTML("beforeend", '<p>Por favor, preencha todos os campos.</p>')
+
+                        return
+                    }
+
+                    if (dif > tabela[ano + ""]) {
+                        messageArea.insertAdjacentHTML("beforeend", '<p>É possível que o aumento tenha sido abusivo, entre em contato abaixo para analisarmos melhor o seu caso</p><a href="https://wa.me/5511981557653?text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20poss%C3%ADvel%20aumento%20abusivo%20do%20meu%20seguro.%20Obrigado!"><button>Fale conosco no Whatsapp</button></a>')
+
+                    } else {
+                        messageArea.insertAdjacentHTML("beforeend", '<p>Aparentemente o aumento do seu convênio está dentro dos padrões da ANS para o ano informado, tente outro ano.</p>')
+                    }
+
+
+                }
+
+                console.log('valor final anterior ' + valorAnterior + ' valor final posterior ' + valorPosterior);
+                calculo(valorAnterior, valorPosterior)
+
+            })
+
+        </script>
+</body>
+
+</html>
