@@ -22,10 +22,12 @@
                     </select>
                 </div>
                 <div><label for="anterior">valor anterior ao reajuste</label>
-                    <input id="anterior" class="anterior valor" name="anterior" type="text" required="required">
+                    <input id="anterior" class="anterior valor" name="anterior" type="text" required="required"
+                        oninput="formatBRLCurrency(this)">
                 </div>
                 <div><label for="posterior">valor posterior ao reajuste</label>
-                    <input id="posterior" class="posterior valor" name="posterior" type="text" required="required">
+                    <input id="posterior" class="posterior valor" name="posterior" type="text" required="required"
+                        oninput="formatBRLCurrency(this)">
                 </div>
 
                 <div><button id="btn-calc" type="submit">calcular reajuste</button></div>
@@ -53,6 +55,18 @@
                 2021: -8.19,
                 2022: 15.50
             }
+
+            function formatBRLCurrency(input) {
+                let value = parseFloat(input.value.replace(/[^\d]/g, '')) / 100;
+
+                let formattedValue = value.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                });
+
+                input.value = formattedValue;
+            }
+
 
             const stringToNumber = function (valor, tipo) {
                 const parsedValue = Number((valor.replace(/[^\d,]/g, '')).replace(',', '.'));
