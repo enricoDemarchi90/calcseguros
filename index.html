@@ -44,101 +44,106 @@
 
         <script>
 
-            const form = document.querySelector("#calcSeguros")
-            const btnCalc = document.getElementById("btn-calc")
-            const messageArea = document.querySelector('.messageArea')
-            let valorAnterior, valorPosterior
+           const form = document.querySelector("#calcSeguros");
+const btnCalc = document.getElementById("btn-calc");
+const messageArea = document.querySelector(".messageArea");
+let valorAnterior, valorPosterior;
 
-            const tabela = {
-                2018: 10,
-                2019: 7.35,
-                2020: 8.14,
-                2021: -8.19,
-                2022: 15.50
-            }
+const tabela = {
+  2018: 10,
+  2019: 7.35,
+  2020: 8.14,
+  2021: -8.19,
+  2022: 15.5,
+};
 
-            function formatBRLCurrency(input) {
-                let value = parseFloat(input.value.replace(/[^\\d]/g, '')) / 100;
+function formatBRLCurrency(input) {
+  let value = parseFloat(input.value.replace(/[^\\d]/g, "")) / 100;
 
-                let formattedValue = value.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                });
+  let formattedValue = value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 
-                input.value = formattedValue;
-            }
+  input.value = formattedValue;
+}
 
+const stringToNumber = function (valor, tipo) {
+  const parsedValue = Number(valor.replace(/[^\d,]/g, "").replace(",", "."));
+  tipo === "Anterior"
+    ? (valorAnterior = parsedValue)
+    : (tipo = "Posterior" ? (valorPosterior = parsedValue) : "");
+};
 
-            const stringToNumber = function (valor, tipo) {
-                const parsedValue = Number((valor.replace(/[^\d,]/g, '')).replace(',', '.'));
-                tipo === 'Anterior' ? valorAnterior = parsedValue : tipo = 'Posterior' ? valorPosterior = parsedValue : ""
-            }
+form.addEventListener("input", (e) => {
+  if (e.target.classList.contains("valor")) {
+    const value = e.target.value;
 
-            form.addEventListener('input', (e) => {
+    if (e.target.classList.contains("anterior")) {
+      stringToNumber(value, "Anterior");
+    } else {
+      stringToNumber(value, "Posterior");
+    }
+  }
+});
 
-                if (e.target.classList.contains('valor')) {
+btnCalc.addEventListener("click", (e) => {
+  e.preventDefault();
 
-                    const value = e.target.value;
+  const valores = document.getElementsByClassName("valor");
+  const dropdownAno = document.getElementById("ano");
+  const ano = dropdownAno.value;
 
-                    if (e.target.classList.contains('anterior')) {
-                        stringToNumber(value, "Anterior")
-                    } else {
-                        stringToNumber(value, "Posterior")
-                    }
+  function removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+  }
 
-                }
+  removeAllChildNodes(messageArea);
 
-            })
+  const calculo = function (anoAnterior, anoAtual) {
+    const calc = ((anoAtual - anoAnterior) / anoAnterior) * 100;
+    const dif = calc.toFixed(2);
 
+    if (anoAnterior == undefined || anoAtual == undefined) {
+      messageArea.insertAdjacentHTML(
+        "beforeend",
+        "<p>Por favor, preencha todos os campos.</p>"
+      );
 
-            btnCalc.addEventListener('click', (e) => {
-                e.preventDefault()
+      return;
+    }
 
-                const valores = document.getElementsByClassName("valor")
-                const dropdownAno = document.getElementById("ano")
-                const ano = dropdownAno.value
+    if (valorPosterior < 1000) {
+      messageArea.insertAdjacentHTML(
+        "beforeend",
+        "<p>Infelizmente não conseguimos calcular os reajustes para mensalidades abaixo de 1mil reais</p>"
+      );
+      return;
+    }
 
-                function removeAllChildNodes(parent) {
-                    while (parent.firstChild) {
-                        parent.removeChild(parent.firstChild);
-                    }
-                }
+    if (dif > tabela[ano + ""]) {
+      messageArea.insertAdjacentHTML(
+        "beforeend",
+        '<p>É possível que o aumento tenha sido abusivo, entre em contato abaixo para analisarmos melhor o seu caso</p><a href="https://wa.me/5511981557653?text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20poss%C3%ADvel%20aumento%20abusivo%20do%20meu%20seguro.%20Obrigado!"><button>Fale conosco no Whatsapp</button></a>'
+      );
+    } else {
+      messageArea.insertAdjacentHTML(
+        "beforeend",
+        "<p>Aparentemente o aumento do seu convênio está dentro dos padrões da ANS para o ano informado, tente outro ano.</p>"
+      );
+    }
+  };
 
-                removeAllChildNodes(messageArea);
-
-
-                const calculo = function (anoAnterior, anoAtual) {
-                    const calc = ((anoAtual - anoAnterior) / anoAnterior) * 100
-                    const dif = calc.toFixed(2)
-
-
-
-                    if (anoAnterior == undefined || anoAtual == undefined) {
-
-                        messageArea.insertAdjacentHTML("beforeend", '<p>Por favor, preencha todos os campos.</p>')
-
-                        return
-                    }
-
-                    if (valorPosterior < 1000) {
-                        messageArea.insertAdjacentHTML("beforeend", '<p>Infelizmente não conseguimos calcular os reajustes para mensalidades abaixo de 1mil reais</p>')
-                        return
-                    }
-
-                    if (dif > tabela[ano + ""]) {
-                        messageArea.insertAdjacentHTML("beforeend", '<p>É possível que o aumento tenha sido abusivo, entre em contato abaixo para analisarmos melhor o seu caso</p><a href="https://wa.me/5511981557653?text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20poss%C3%ADvel%20aumento%20abusivo%20do%20meu%20seguro.%20Obrigado!"><button>Fale conosco no Whatsapp</button></a>')
-
-                    } else {
-                        messageArea.insertAdjacentHTML("beforeend", '<p>Aparentemente o aumento do seu convênio está dentro dos padrões da ANS para o ano informado, tente outro ano.</p>')
-                    }
-
-
-                }
-
-                console.log('valor final anterior ' + valorAnterior + ' valor final posterior ' + valorPosterior);
-                calculo(valorAnterior, valorPosterior)
-
-            })
+  console.log(
+    "valor final anterior " +
+      valorAnterior +
+      " valor final posterior " +
+      valorPosterior
+  );
+  calculo(valorAnterior, valorPosterior);
+});
 
         </script>
 </body>
