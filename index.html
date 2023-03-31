@@ -69,7 +69,7 @@ function formatBRLCurrency(input) {
 }
 
 const stringToNumber = function (valor, tipo) {
-  const parsedValue = Number(valor.replace(/[^\d,]/g, "").replace(",", "."));
+  const parsedValue = Number(valor.replace(/[^\\d,]/g, "").replace(",", "."));
   tipo === "Anterior"
     ? (valorAnterior = parsedValue)
     : (tipo = "Posterior" ? (valorPosterior = parsedValue) : "");
