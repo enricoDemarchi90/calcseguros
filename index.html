@@ -58,7 +58,7 @@ const tabela = {
 };
 
 function formatBRLCurrency(input) {
-  let value = parseFloat(input.value.replace(/[^\\d]/g, "")) / 100;
+let value = parseFloat(input.value.replace(/[^\\\\d]/g, "")) / 100;
 
   let formattedValue = value.toLocaleString("pt-BR", {
     style: "currency",
@@ -69,7 +69,7 @@ function formatBRLCurrency(input) {
 }
 
 const stringToNumber = function (valor, tipo) {
-  const parsedValue = Number(valor.replace(/[^\\d,]/g, "").replace(",", "."));
+const parsedValue = Number(valor.replace(/[^\\\\d,]/g, "").replace(",", "."));
   tipo === "Anterior"
     ? (valorAnterior = parsedValue)
     : (tipo = "Posterior" ? (valorPosterior = parsedValue) : "");
